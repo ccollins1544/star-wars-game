@@ -44,6 +44,8 @@
   --button-background: #1E2022;
   --cool-red: #E9290F;
   --footer-hover-text: rgba(233, 41, 15, .9);
+  --ally-color: lightgreen;
+  --enemy-color: #E9290F;
 }
 
 /*------------------------------------------------------*/
@@ -117,7 +119,9 @@ section#main-section {
 section.section-block {
   margin: 0 auto;
   max-width: 980px;
-  background-color: #fff; /* transparent; */ 
+  text-align: center;
+  color: var(--body-background);
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
 li {
@@ -261,6 +265,63 @@ hr {
 /*------------------------------------------------------*/
 /* 3.1 Game Layout
 /*------------------------------------------------------*/
+/* Images */
+.hero.card img {
+  max-width: 100%;
+}
+
+.hero.card {
+  border: 1px solid var(--body-text);
+  cursor: pointer;
+}
+
+.hero.card.ally {
+  background-color: var(--ally-color);
+}
+
+.hero.card.enemy {
+  background-color: var(--enemy-color);
+}
+
+.was_attacked {
+  color: var(--enemy-color);
+}
+
+.hero.card.enemy-opponent {
+  color: var(--body-background);
+  background-color: var(--primary-menu-background);
+}
+
+.hero.card .card-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  color: var(--button-text);
+  background-color: var(--body-text);
+}
+
+.hero.card:not(.ally):not(.enemy):not(.enemy-opponent):hover {
+  background-color: var(--accent-text);
+}
+
+.hero.card .card-title {
+  color:var(--body-text);
+}
+
+.btn-primary {
+  font-size: 1.3em;
+  color: var(--button-text);
+  border-color: var(--accent-text);
+  background-color: var(--accent-text);
+}
+
+.btn-primary:hover {
+  color: #fff;
+  border-color: var(--enemy-color);
+  background-color: var(--enemy-color);
+}
 
 
 /*------------------------------------------------------*/
