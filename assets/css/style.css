@@ -330,7 +330,9 @@ hr {
 /* 4.1 Footer Links and Credits
 /*------------------------------------------------------*/
 #main-footer {
-  position: relative;
+  /* position: relative; */
+  position: absolute;
+  width: 100%;
   display: flex;
   flex-flow: column;
   height: 83px;

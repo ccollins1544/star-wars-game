@@ -35,13 +35,19 @@ class StarWarsCharacter {
 
 class StarWarsGame {
   // Game Properties
-  Heroes = []; 
-  Ally = {};
-  Enemies = [];
-  Opponent = {}; 
+  Heroes = [];   // All heroes in the game
+  Enemies = [];  // All enemies
+  Opponent = {}; // Chosen enemy 
+  Ally = {};     // Your chosen ally hero 
+  base_attack_power = 0; // Ally Base Attack Power
 
-  attack_counter=0;
+  attack_counter=0; // Number of total attacks throughout the game. 
 
+  /**
+   * constructor
+   * Builds hero elements on the page and adds game object to be accessed via onclick().
+   * @param {array of objects} heroes - array of objects in the format.
+   */
   constructor(heroes){
     this.Heroes = heroes;
 
@@ -53,14 +59,17 @@ class StarWarsGame {
     if(!window['GAME']) { window['GAME'] = ThatGame; }
   }
   
+  /**
+   * chooseAlly
+   * Once ally is chosen attackPower is calculated on all heroes. Then dom elements are moved into next phase of the game.
+   * @param {dom object} el - the dom element clicked on representing ally. 
+   */
   chooseAlly(el=""){
     // After Character is chosen we need to set base "attack power" and "counter attack power" for the oponent. 
     if(this.isElement(el)){
-
-      // el.parentElement.classList.add("ally");
-      // $(el).parent().addClass("ally");
       var chosen_one = $(el).data("slug");
       var ThatGame = this;
+      var enemy_index = 0;
 
       this.Heroes.forEach(function(hero, index){
         var healthPoints = hero.hp;
@@ -73,6 +82,7 @@ class StarWarsGame {
           this[index].ally = true;
           this[index].attackPower = ThatGame.setAttackPower(healthPoints,true);
           ThatGame.Ally = this[index]; 
+          ThatGame.base_attack_power = this[index].attackPower;
           $(element_id).addClass("ally");
           
         }else{
@@ -80,16 +90,22 @@ class StarWarsGame {
           
           ThatGame.Enemies.push(this[index]);
           $(element_id).addClass("enemy");
+          $(element_id).attr("data-eindex",enemy_index);
           $(element_id).attr("onclick","GAME.chooseOpponent(this); return false;");
           $(element_id).detach().appendTo("#enemies");
+          enemy_index++;
         }
 
       }, this.Heroes);
+      console.log("HEROES",this.Heroes);
     }
-
-    console.log("HEROES",this.Heroes);
   } // END choose ally
 
+  /**
+   * isElement
+   * @param {dom object} obj 
+   * @return {boolean} true if parameter is an object and false if not. 
+   */
   isElement(obj) {
     try {
       //Using W3 DOM2 (works for FF, Opera and Chrome)
@@ -105,14 +121,23 @@ class StarWarsGame {
     }
   } // END isElement
 
+  /**
+   * setAttackPower
+   * Generate Random Number between 14%-21% of HealthPoints for enemy Attack Power. 
+   * If ally then attackPower is always 7% of HealthPoints.
+   * @param {integer} hp - Health Points
+   * @param {boolean} ally - Usually false for representing enemy. True is ally.
+   */
   setAttackPower(hp,ally=false){
-    // Generate Random Number for Attack Power
-    // Ally get 7% and Enemies get 14%-21% AttackPower of HealthPoints
-    var min = (ally) ? Math.floor(hp * 0.07) : Math.floor(hp * 0.14);
-    var max = (ally) ? Math.floor(hp * 0.07) : Math.floor(hp * 0.21);
+    var min = (ally) ? Math.floor(hp * 0.1) : Math.floor(hp * 0.12);
+    var max = (ally) ? Math.floor(hp * 0.1) : Math.floor(hp * 0.15);
     return Math.floor(Math.random() * Math.floor(+max - +min)) + +min;
   }
 
+  /**
+   * addHeroes
+   * Creates Hero elements on the page.
+   */
   addHeroes(){
     var heroHTML = "";
     
@@ -127,8 +152,22 @@ class StarWarsGame {
     $("#select-character").append(heroHTML);
   }
 
+  /**
+   * chooseOpponent
+   * Once enemy opponent is chosen then it's moved into the defender stage of the game. 
+   * @param {dom element} el - The enemy element to fight next
+   */
   chooseOpponent(el=""){
-    if(this.isElement(el) && $.isEmptyObject(this.Opponent) === true){
+    console.log("Heroes",this.Heroes);
+    console.log("Enemies",this.Enemies);
+    console.log("Opponent",this.Opponent);
+    console.log("Ally",this.Ally);
+    console.log("condition",$.isEmptyObject(this.Opponent));
+    console.log("HAS PROPERTY",this.Opponent.hasOwnProperty("hp"));
+
+    // if(this.isElement(el) && $.isEmptyObject(this.Opponent) === true){
+    if(this.isElement(el) && this.Opponent.hasOwnProperty("hp") === false){
+      console.log("ready to select");
       var chosen_enemy = $(el).data("slug");
       var ThatGame = this;
 
@@ -143,11 +182,27 @@ class StarWarsGame {
           $(element_id).detach().appendTo("#opponent");
         }
       }, this.Enemies);
+      return;
     }
+
+    alert("You already have an opponent to fight!");
   } // END chooseOpponent
 
+  /**
+   * attack
+   * Runs when #attack-btn is clicked. 
+   * -Update health points on ally and oppenent
+   * -Increase ally attack power
+   * -Check win condition
+   * 
+   * @param {dom element} el - the #attack-btn element
+   */
   attack(el=""){
-    if(this.isElement(el) && $.isEmptyObject(this.Opponent) === false){
+    // Make sure we have an opponent to attack
+    console.log("HAS PROPERTY",this.Opponent.hasOwnProperty("hp"));
+    // if(this.isElement(el) && $.isEmptyObject(this.Opponent) === false){
+
+    if(this.isElement(el) && this.Opponent.hasOwnProperty("hp") === true){
       var attack_power = this.Ally.attackPower;
       var counter_attack_power = this.Opponent.attackPower;
       var attack_message = "<ul class='list-group mx-auto'>";
@@ -156,10 +211,11 @@ class StarWarsGame {
       attack_message += "</ul>";
       $("#attack_messages").html(attack_message);
       
-      // Update Values
+      // Update health points on ally and opponent
       this.Opponent.hp -= attack_power;
       this.Ally.hp -= counter_attack_power;
 
+      // Update dom elements 
       var ally_id = "#" + this.Ally.slug;
       var opponent_id = "#" + this.Opponent.slug;
 
@@ -169,24 +225,75 @@ class StarWarsGame {
       $(ally_id).find(".health_points").addClass("was_attacked");
       $(ally_id).find(".health_points").text(this.Ally.hp)
 
-      var hero_index = $("#opponent").find(".enemy-opponent").data("index");
-      var base_attack_power = this.Heroes[hero_index].attackPower;
-      console.log("BASE Attack Power", base_attack_power);
-
-      attack_power += base_attack_power;
+      // Increase Ally attack power
+      console.log("Ally BASE AP",this.Ally.attackPower);
+      console.log("BASE Attack Power", this.base_attack_power);
+      
+      attack_power += this.base_attack_power;
       this.Ally.attackPower = attack_power;
-      console.log("NEW Attack Power",this.Ally.attackPower);
+      console.log("Ally Increased AP",this.Ally.attackPower);
 
       this.attack_counter++;
       console.log("Counter",this.attack_counter);
 
       this.checkWinCondition();
+      return;
+
     }
+    // else if(this.Enemies.length === 1){
+    //   console.log("last enemy",this.Enemies[0].slug);
+    //   var last_enemy = "#" + this.Enemies[0].slug;
+    //   this.chooseOpponent($(last_enemy));
+    //   //this.attack(); // recursive...spooky
+    //   console.log("spooky");
+    //   return;
+    // }
+
+    alert("You don't have an opponent to attack. Please choose one!");
   }
 
+  /**
+   * checkWinCondition
+   * See if someone died and remove them from the game. If ally dies you lose.
+   * If enemy dies then another opponent can be chosen.
+   */
   checkWinCondition(){
-    console.log(this.Ally)
-    console.log(this.Opponent);
-  }
+    console.log("Win Condition");
+    console.log("Ally",this.Ally)
+    console.log("Opponent",this.Opponent);
 
+    // Check you died
+    if(this.Ally.hp <= 0){ 
+      var ally_id = "#" + this.Ally.slug;
+      $(ally_id).remove();
+      this.Ally = {};
+      alert('You Lose!');
+      return; 
+    }
+
+    // Remove opponent from the game so another one can be chosen.
+    
+    if(this.Opponent.hp <= 0){
+      var opponent_id = "#" + this.Opponent.slug;
+      var enemy_index = $(opponent_id).data("eindex");
+      this.Enemies.splice(enemy_index,1);
+
+      // Array was re-index so we need to update the eindex values
+      this.Enemies.forEach(function(e,i){
+        var enemy = "#" + e.slug;
+        $(enemy).data("eindex",i);
+      });
+
+      $(opponent_id).remove();
+      this.Opponent = {};
+
+      console.log("Enemies Remaining", this.Enemies);
+      console.log(this.Heroes);
+
+      if($.isEmptyObject(this.Enemies) === true){
+        alert("You Win!");
+      }
+    }
+
+  } // END checkWinCondition
 } // END StarWarsGame Class
