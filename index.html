@@ -41,7 +41,9 @@
     </div><!-- .container-fluid -->
   </header><!-- #main-header -->
 
-  <div class="alert" id="alert-messages" role="alert"><h2>Select Your Character</h2></div>
+  <div class="alert" id="alert-messages" role="alert">
+    <h2>Select Your Character</h2>
+  </div>
 
   <!-- Main Container -->
   <article id="main-container" class="content-wrapper">
@@ -49,7 +51,7 @@
       <div class="container">
         <div class="row first-row" id="select-character"></div>
 
-        <!-- Enemies Availablee To Attack -->
+        <!-- Enemies Available To Attack -->
         <h2 id="enemies-title">Enemies Available To Attack</h2>
         <div class="row" id="enemies"></div>
 
@@ -57,7 +59,7 @@
         <h2 id="fight-title">Fight Section</h2>
         <button type="button" class="btn btn-primary" id="attack-btn"
           onclick="GAME.attack(this); return false;">Attack<span class="badge badge-pill badge-primary"></span></button>
-        
+
         <h4 id="defender-title">Defender</h4>
 
         <div class="row" id="opponent"></div>
@@ -122,7 +124,7 @@
   <script src="assets/javascript/game.js?v=2.0" type="text/javascript"></script>
   <script src="assets/javascript/starwars-characters.js" type="text/javascript"></script>
   <script type="text/javascript">
-      const ThisGame = new StarWarsGame(starwars_characters);
+    const ThisGame = new StarWarsGame(starwars_characters);
   </script>
 </body>
 

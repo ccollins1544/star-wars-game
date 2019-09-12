@@ -225,7 +225,7 @@ class StarWarsGame {
   /**
    * attack
    * Called when #attack-btn is clicked. 
-   * -Update health points on ally and oppenent
+   * -Update health points on ally and opponent
    * -Increase ally attack power
    * -Check win condition
    * 
