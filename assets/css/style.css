@@ -86,14 +86,14 @@ body.page-template {
 }
 
 article#main-container {
-  margin-top: 22px;
+  margin-top: 0px;
 }
 
 /** STICKY FOOTER
 * header 63px + margin 22px + footer 83px = 168px
 */
 #main-container.content-wrapper {
-  min-height: calc(100vh - 168px);
+  min-height: calc(100vh - 146px);
 }
 
 section#main-section {
@@ -109,10 +109,11 @@ section#main-section {
 .row {
   margin: 0 auto;
   padding: 15px 0px;
+  margin-bottom: 1rem;
 }
 
 .first-row {
-  padding-top: 25px;
+  padding-top: 0px;
   padding-bottom: 0px;
 }
 
@@ -302,7 +303,8 @@ hr {
   background-color: var(--body-text);
 }
 
-.hero.card:not(.ally):not(.enemy):not(.enemy-opponent):hover {
+/* .hero.card:not(.ally):not(.enemy):not(.enemy-opponent):hover { */
+.hero.card:not(.ally):not(.enemy-opponent):hover {
   background-color: var(--accent-text);
 }
 
@@ -311,18 +313,49 @@ hr {
 }
 
 .btn-primary {
+  margin-bottom: 0.7rem;
   font-size: 1.3em;
   color: var(--button-text);
   border-color: var(--accent-text);
   background-color: var(--accent-text);
 }
 
-.btn-primary:hover {
+.badge-primary {
+  color: var(--button-text);
+  background-color: var(--accent-text);
+}
+
+.btn-primary:hover,
+.btn-primary:hover .badge-primary {
   color: #fff;
   border-color: var(--enemy-color);
   background-color: var(--enemy-color);
 }
 
+/* Alert Messages */ 
+#alert-messages,
+#attack_messages .list-group-item {
+  margin-bottom: 0px;
+  color: var(--button-text);
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-color: rgba(0, 0, 0, 0.5);
+}
+
+.attack_power,
+#alert-messages.alert-dark {
+  color: var(--accent-text);
+}
+
+#alert-messages.alert-danger,
+#attack_messages .list-group-item-danger {
+  color: var(--enemy-color);
+}
+
+#alert-messages.alert-success,
+#attack_messages .list-group-item-success {
+  color: var(--ally-color);
+}
 
 /*------------------------------------------------------*/
 /*--------------[ 4.0 FOOTER ]--------------------------*/
@@ -330,12 +363,13 @@ hr {
 /* 4.1 Footer Links and Credits
 /*------------------------------------------------------*/
 #main-footer {
-  /* position: relative; */
-  position: absolute;
+  position: relative;
+  /* position: absolute; */
   width: 100%;
   display: flex;
   flex-flow: column;
   height: 83px;
+  /* bottom: 0px; */
 }
 
 /* Footer Links */

@@ -27,12 +27,12 @@
     <div class="container-fluid clearfix">
       <!-- Main Navbar -->
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="main-nav">
-        <div class="navbar-brand mb-0 h1">Star Wars RPG</div>
+        <div class="navbar-brand mb-0 h1">Star Wars RPG Game</div>
 
         <div class="collapse navbar-collapse">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-              <a class="nav-link" href="#">New Game</a>
+              <a class="nav-link" href="#new-game" onclick="GAME.newGame(); return false;">New Game</a>
             </li>
           </ul><!-- .navbar-nav -->
         </div><!-- .collapse -->
@@ -41,33 +41,32 @@
     </div><!-- .container-fluid -->
   </header><!-- #main-header -->
 
-  <!-- Main Container -->
-  <article class="main-container" class="content-wrapper">
-    <section class="section-block jumbotron" id="main-section">
-      <h1 class="mx-auto">Star Wars RPG Game</h1>
-      <div class="container">
+  <div class="alert" id="alert-messages" role="alert"><h2>Select Your Character</h2></div>
 
-        <!-- Select Your Character -->
-        <h4>Select Your Character</h4>
+  <!-- Main Container -->
+  <article id="main-container" class="content-wrapper">
+    <section class="section-block jumbotron" id="main-section">
+      <div class="container">
         <div class="row first-row" id="select-character">
 
         </div><!-- .first-row -->
 
         <!-- Enemies Availablee To Attack -->
-        <h4>Enemies Available To Attack</h4>
+        <h2 id="enemies-title">Enemies Available To Attack</h2>
         <div class="row" id="enemies">
 
         </div>
 
         <!-- Fight Section -->
-        <h4>Fight Section</h4>
-        <button type="button" class="btn btn-primary" id="attack-btn" onclick="GAME.attack(this); return false;">Attack</button>
-        <h4>Defender</h4>
+        <h2 id="fight-title">Fight Section</h2>
+        <button type="button" class="btn btn-primary" id="attack-btn"
+          onclick="GAME.attack(this); return false;">Attack<span class="badge badge-pill badge-primary"></span></button>
+        <h4 id="defender-title">Defender</h4>
         <div class="row" id="opponent">
 
         </div>
         <div class="row" id="attack_messages">
-          
+
         </div>
 
       </div>
@@ -126,11 +125,12 @@
     crossorigin="anonymous"></script>
 
   <!-- GAME JS -->
-  <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+    crossorigin="anonymous"></script>
   <script src="assets/javascript/game.js?v=1.1.0" type="text/javascript"></script>
   <script src="assets/javascript/starwars-characters.js" type="text/javascript"></script>
   <script type="text/javascript">
-    const ThisGame = new StarWarsGame(starwars_characters); 
+      const ThisGame = new StarWarsGame(starwars_characters);
   </script>
 </body>
 

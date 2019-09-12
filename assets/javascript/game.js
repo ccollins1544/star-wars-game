@@ -50,6 +50,7 @@ class StarWarsGame {
    */
   constructor(heroes){
     this.Heroes = heroes;
+    $("#attack-btn").hide();
 
     var ThatGame = this;
     // Create Elements on the Page
@@ -81,7 +82,7 @@ class StarWarsGame {
         if(hero.slug === chosen_one){
           this[index].ally = true;
           this[index].attackPower = ThatGame.setAttackPower(healthPoints,true);
-          ThatGame.Ally = this[index]; 
+          ThatGame.Ally = ThatGame.copyObject(this[index]);
           ThatGame.base_attack_power = this[index].attackPower;
           $(element_id).addClass("ally");
           
@@ -96,7 +97,14 @@ class StarWarsGame {
           enemy_index++;
         }
 
+        $(element_id).find(".attack_power").text("AP: " + this[index].attackPower + " ");
+
       }, this.Heroes);
+
+      // Put Ally next to Opponent element
+      $("#select-character").detach().insertAfter($("#enemies"));
+      this.gameAlert(); // reset gameAlert
+      $("#attack-btn").show();
       console.log("HEROES",this.Heroes);
     }
   } // END choose ally
@@ -129,8 +137,8 @@ class StarWarsGame {
    * @param {boolean} ally - Usually false for representing enemy. True is ally.
    */
   setAttackPower(hp,ally=false){
-    var min = (ally) ? Math.floor(hp * 0.1) : Math.floor(hp * 0.12);
-    var max = (ally) ? Math.floor(hp * 0.1) : Math.floor(hp * 0.15);
+    var min = (ally) ? Math.floor(hp * 0.07) : Math.floor(hp * 0.07);
+    var max = (ally) ? Math.floor(hp * 0.07) : Math.floor(hp * 0.14);
     return Math.floor(Math.random() * Math.floor(+max - +min)) + +min;
   }
 
@@ -145,7 +153,7 @@ class StarWarsGame {
       heroHTML += "<div class='hero card text-center col-3 mx-auto' onclick='GAME.chooseAlly(this); return false;' id='" + hero.slug + "' data-slug='" + hero.slug + "' data-index='" + index + "' data-hp='" + hero.hp + "'>";
       heroHTML += "<div class='card-body'><h6 class='card-title'>" + hero.name + "</h6>";
       heroHTML += "<img class='card-img' alt='" + hero.name + "' src='" + hero.image + "' />";
-      heroHTML += "<p class='card-text font-weight-bold'>HP: <span class='health_points'>" + hero.hp + "</span></p></div><!-- .card-body -->";
+      heroHTML += "<p class='card-text font-weight-bold'><span class='attack_power'></span>HP: <span class='health_points'>" + hero.hp + "</span></p></div><!-- .card-body -->";
       heroHTML += "</div><!-- .hero -->";
     });
 
@@ -175,7 +183,7 @@ class StarWarsGame {
         var element_id = "#" + hero.slug;
 
         if(hero.slug === chosen_enemy){
-          ThatGame.Opponent = this[index];
+          ThatGame.Opponent = ThatGame.copyObject(this[index]);
           $(element_id).removeClass("enemy");
           $(element_id).addClass("enemy-opponent");
           $(element_id).removeAttr("onclick");
@@ -185,7 +193,7 @@ class StarWarsGame {
       return;
     }
 
-    alert("You already have an opponent to fight!");
+    this.gameAlert("You already have an opponent to fight!","dark");
   } // END chooseOpponent
 
   /**
@@ -207,9 +215,10 @@ class StarWarsGame {
       var counter_attack_power = this.Opponent.attackPower;
       var attack_message = "<ul class='list-group mx-auto'>";
       attack_message += "<li class='list-group-item list-group-item-success'>You Attack " + this.Opponent.name + " for " + attack_power + " damage.</li>";
-      attack_message += "<li class='list-group-item list-group-item-danger'>" + this.Opponent.name + " attacked you back for " + counter_attack_power + "</li>";
+      attack_message += "<li class='list-group-item list-group-item-danger'>" + this.Opponent.name + " attacked you back for " + counter_attack_power + ". </li>";
       attack_message += "</ul>";
       $("#attack_messages").html(attack_message);
+      this.gameAlert("You Attack " + this.Opponent.name + " for " + attack_power + " damage. " + this.Opponent.name + " attacked you back for " + counter_attack_power);
       
       // Update health points on ally and opponent
       this.Opponent.hp -= attack_power;
@@ -219,37 +228,40 @@ class StarWarsGame {
       var ally_id = "#" + this.Ally.slug;
       var opponent_id = "#" + this.Opponent.slug;
 
+      $(opponent_id).find(".attack_power").text("AP: " + counter_attack_power + " ");
       $(opponent_id).find(".health_points").addClass("was_attacked");
       $(opponent_id).find(".health_points").text(this.Opponent.hp);
-
+      
       $(ally_id).find(".health_points").addClass("was_attacked");
       $(ally_id).find(".health_points").text(this.Ally.hp)
-
+      
       // Increase Ally attack power
       console.log("Ally BASE AP",this.Ally.attackPower);
       console.log("BASE Attack Power", this.base_attack_power);
       
       attack_power += this.base_attack_power;
       this.Ally.attackPower = attack_power;
+      $(ally_id).find(".attack_power").text("AP: " + attack_power + " ");
       console.log("Ally Increased AP",this.Ally.attackPower);
 
       this.attack_counter++;
+      $("#attack-btn .badge").text(" "+this.attack_counter);
       console.log("Counter",this.attack_counter);
 
       this.checkWinCondition();
       return;
 
+    }else if(this.Enemies.length === 1){
+      console.log("last enemy",this.Enemies[0].slug);
+      var last_enemy = "#" + this.Enemies[0].slug;
+      $(last_enemy).click();
+      // this.chooseOpponent($(last_enemy));
+      //this.attack(); // recursive...spooky
+      console.log("spooky");
+      return;
     }
-    // else if(this.Enemies.length === 1){
-    //   console.log("last enemy",this.Enemies[0].slug);
-    //   var last_enemy = "#" + this.Enemies[0].slug;
-    //   this.chooseOpponent($(last_enemy));
-    //   //this.attack(); // recursive...spooky
-    //   console.log("spooky");
-    //   return;
-    // }
 
-    alert("You don't have an opponent to attack. Please choose one!");
+    this.gameAlert("You don't have an opponent to attack. Please choose one!","dark");
   }
 
   /**
@@ -264,10 +276,11 @@ class StarWarsGame {
 
     // Check you died
     if(this.Ally.hp <= 0){ 
-      var ally_id = "#" + this.Ally.slug;
-      $(ally_id).remove();
+      // var ally_id = "#" + this.Ally.slug;
+      // $(ally_id).remove();
       this.Ally = {};
-      alert('You Lose!');
+      this.gameAlert('<h2>Looks like that guy just killed you...Sorry you Lose!</h2>','danger');
+      $("#attack-btn").hide();
       return; 
     }
 
@@ -284,16 +297,132 @@ class StarWarsGame {
         $(enemy).data("eindex",i);
       });
 
+      if(this.Enemies.length === 1 ){
+        $("#enemies-title").hide();
+      }
+
+      var attack_message = this.Opponent.name + " has been eliminated! " + this.Enemies.length + " enemies remaining.";
+      this.gameAlert(attack_message,"success");
+
+      attack_message = "<ul class='list-group mx-auto'><li class='list-group-item list-group-item-success'>" + attack_message + "</li></ul>";
+      $("#attack_messages").html(attack_message);
+
       $(opponent_id).remove();
       this.Opponent = {};
 
-      console.log("Enemies Remaining", this.Enemies);
+      console.log("Enemies Remaining", this.Enemies.length);
       console.log(this.Heroes);
 
-      if($.isEmptyObject(this.Enemies) === true){
-        alert("You Win!");
+      if(this.Enemies.length === 0){
+        this.gameAlert("<h2>All enemies have been defeated. You Win!</h2>","success");
+        $("#attack-btn").hide();
+        $("#fight-title").hide();
+        $("#defender-title").hide();
       }
     }
 
   } // END checkWinCondition
+
+  /**
+   * gameAlert
+   * @param {string} message - Message to go in the alert box
+   * @param {string} addThisClass - can be dark, danger, or success. 
+   */
+  gameAlert(message="",addThisClass=""){
+    console.log("alert ran",message);
+    if(message === "" && addThisClass === "" || message === ""){ // RESET Alert Message
+      if($("#alert-messages").className !== "alert"){
+        $("#alert-messages").removeClass("alert-dark");
+        $("#alert-messages").removeClass("alert-danger");
+        $("#alert-messages").removeClass("alert-success");
+        $("#alert-messages").addClass("alert");
+        $("#alert-messages").text("");
+        $("#alert-messages").hide();
+      }
+      return;
+      
+    }else if (addThisClass === "dark"){
+      addThisClass = "alert-dark";
+      
+    }else if (addThisClass === "danger"){
+      addThisClass = "alert-danger";
+      
+    }else if (addThisClass === "success"){
+      addThisClass = "alert-success";
+    }
+    
+    // IF same alert message keeps getting spammed then add ! and change red
+    if($("#alert-messages").html() === message ){
+      message += "!";
+      addThisClass = "alert-danger";
+    }
+    
+    $("#alert-messages").removeClass("alert-dark");
+    $("#alert-messages").removeClass("alert-danger");
+    $("#alert-messages").removeClass("alert-success");
+    $("#alert-messages").addClass("alert");
+    if(addThisClass !== "") { $("#alert-messages").addClass(addThisClass); }
+    $("#alert-messages").html(message);
+    $("#alert-messages").show();
+    return;
+  } // END gameAlert
+
+  /**
+   * newGame
+   * resets all game properties for a new game.
+   */
+  newGame(){
+    this.Heroes.forEach(function(hero,index){
+      this[index].ally = false;
+      this[index].attackPower = 0;
+    }, this.Heroes);
+
+    this.Enemies = [];  // All enemies
+    this.Opponent = {}; // Chosen enemy 
+    this.Ally = {};     // Your chosen ally hero 
+    this.base_attack_power = 0; // Ally Base Attack Power
+    this.attack_counter=0; // Number of total attacks throughout the game. 
+
+    $("#select-character").detach().prependTo($("#main-section > .container"));
+    $("#select-character").empty();
+    $("#enemies").empty();
+    $("#opponent").empty();
+    $("#enemies-title").show();
+    $("#fight-title").show();
+    $("#defender-title").show();
+    $("#attack-btn").hide();
+    $("#attack-btn .badge").empty();
+    $("#attack_messages").empty();
+    this.gameAlert("<h2>Select Your Character</h2>");
+    this.addHeroes();
+
+    console.log("NEW Game!",this.Heroes);
+    console.log("NEW Game!!!!",this.Enemies);
+  }
+
+  /**
+   * copyObject
+   * 
+   * Javascript doesn't actually copy objects when using = it just references the original object.
+   * This creates problems when trying to preserver original data. So this function should do an 
+   * iteration copy of the source objects properties. 
+   * 
+   * @param {object} src 
+   * @return {object} target - a clone of src
+   */
+  copyObject(src) {
+    let target = {};
+    for (let prop in src) {
+      if (src.hasOwnProperty(prop)) {
+        // if the value is a nested object, recursively copy all it's properties
+        if (typeof src[prop] ==="object") {
+          target[prop] = this.copyObject(src[prop]);
+        } else {
+          target[prop] = src[prop];
+        }
+      }
+    }
+    return target;
+  }
+  
 } // END StarWarsGame Class
