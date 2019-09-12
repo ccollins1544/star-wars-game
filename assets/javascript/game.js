@@ -124,7 +124,8 @@ class StarWarsGame {
    * Generate Random Number between 8%-12% of HealthPoints for enemy Attack Power. 
    * If ally then attackPower is always 10% of HealthPoints. Unless you're luke then you get 20 attack power to start off. 
    * @param {integer} hp - Health Points.
-   * @param {integer} attack_power - used during attacks.
+   * @param {boolean} ally - allies attack power is calculated differently tahn enemies.
+   * @return {integer} attack_power - used during attacks.
    */
   setAttackPower(hp,ally=false){
     // Make attack power a little random for entertainment.
