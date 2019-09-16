@@ -1,4 +1,4 @@
-starwars_characters = [
+var starwars_characters = [
   {
     "name" : "Obi-Wan Kenobi",
     "slug" : "obi-wan",

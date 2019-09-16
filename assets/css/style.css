@@ -76,13 +76,7 @@ body.page-template {
   -moz-background-size: contain;
   -o-background-size: contain;
   background-size: contain;
-  /* background-position: top left; */
-  /* background: url('../images/black_paper_800x800.png') */
   background: url('../images/starwars/star-wars-background-blue.png') no-repeat top;
-  /* background: url('../images/starwars/star-wars-background-sunset.jpg') no-repeat top; // END GAME  */
-  /* background: url('../images/starwars/star-wars-the-force-unleashed-movie-wallpapers.jpg') no-repeat top; // BATTLE  */
-  /* background: url('../images/starwars/star-wars-background-sky.jpg') no-repeat top; // TOO BIG  */
-  /* background: url('../images/starwars/tie-fighter-star-wars_6400x4000.jpg') no-repeat top; // TOO BIG */
 }
 
 article#main-container {
