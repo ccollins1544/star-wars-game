@@ -1,5 +1,4 @@
 # Star Wars RGP Game 
-**unit 4 game** 
 
 Star Wars game where a character is and must fight off the remaining characters.
 
